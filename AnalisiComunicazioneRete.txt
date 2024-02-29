@@ -1,0 +1,34 @@
+ESERCIZIO PRATICA S1/L4
+
+Analisi Comunicazione Livello 2 e 3 Modello ISO/OSI 
+
+- Analisi Protocollo TCP/HTTP (porta 80) richiesto dal dispositivo 192.168.100.100 al server 192.169.200.200:
+
+Viene generato un primo paccheto TCP indirizzato allo Switch0 dove viene specificato: 
+- il MAC Address destinatario conosciuto, ossia quello del proprio ip gateway 192.168.100.1 (router): 000C:8566:2301
+- Source IP/Mittente (192.168.100.100)
+- Destination IP ( 192.169.200.200),
+- la porta del dispositivo richiedente ( 1027 ) 
+- destination port, in questo caso la porta relativa al servizio HTTP ( 80 )
+- prima fase della "three-hand-shake" - SYN - con primo numero sequenza (0), Acknoledgement numbero ancora sconosciuto 
+
+Lo switch0 inoltra il pacchetto al Router che modifica il destination address con il MAC address del dispositivo finale ossia il Server : ( DEST ADDR:0006.2A4D.1B5D ) e inoltra il pacchetto allo switch1;
+
+da qui lo switch1 manda il paccchetto a tutti i dispotivi della sua rete tra cui il destinatario corretto finale, il Server 192.168.200.200 . (Solo in questo primo scambio di pacchetti, successivamente lo switch avrà salvato l'ip address corretto associato al mac address);
+
+il pacchetto TCP finale destinato al Server ora presenta questi dati:
+
+- Source Port: 80
+- Destination Port 1027
+- Sequence Number 0 e Acknowlegment Number 1 = Seconda fase "Three-Hand-Shake" SYN-ACK.
+
+Il server restituisce quindi il pacchetto TCP facendo la strada inversa verso lo switch1 con i seguenti dati modificati:
+
+- destination mac address - il router gateway 192.168.200.1 (DEST ADDR:000C.8566.2302 )
+- source ip mittente se stesso ( 192.168.200.200 )
+- destination ip il dispostivo che ha mandato la richiesta ( 192.168.100.100 )
+  
+il pacchetto viene quindi recapitato nuovamente al router che indirizza verso lo switch0, modificando nuovamente il
+mac address di destinazione con quello del dispostivo richiedente: ( DEST ADDR:0001.4369.A470  ).
+
+Una volta ricevuto il primo pacchetto, il dispostivo richiedente scambierà ulteriori pacchetti TCP fino al completamento dello scambio dei dati, nella prima risposta stabilirà chiuderà la prima connessione e la "three-hand-shake", modificando il dato Acknowledgement number con sequence ricevuto + 1 e iniziando una nuova sequence.
